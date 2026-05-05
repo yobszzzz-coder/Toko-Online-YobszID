@@ -445,6 +445,33 @@
     display: none;
 }
 
+/* ===== TAMBAHAN STYLE SALURAN WA ===== */
+.link-saluran-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-top: 8px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: all 0.3s ease;
+}
+
+.link-saluran-wa:hover {
+    background: #25d366;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(37, 211, 102, 0.5);
+}
+
+.link-saluran-wa img {
+    width: 16px;
+    height: 16px;
+}
 
 
 
@@ -460,10 +487,19 @@
         <div class="aura aura-3"></div>
     </div>
 
-    <header>
-        <h1>TOKO ONLINE YOBSZ</h1>
-        <p>Jual Beli Aman & Terpercaya</p>
-    </header>
+<!-- HEADER -->
+<header>
+    <h1>TOKO ONLINE YOBSZ</h1>
+    <p>Jual Beli Aman & Terpercaya</p>
+    
+    <!-- 👇 BAGIAN SALURAN WA YANG DITAMBAHKAN -->
+    <a href="https://whatsapp.com/channel/0029Vb601Uw1SWt9BEs8Xf3V" 
+       target="_blank" class="link-saluran-wa">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
+        Ikuti Saluran WhatsApp Kami Untuk Info Lanjut...
+    </a>
+</header>
+
     
 <!-- LAYAR ZOOM GAMBAR -->
 <div class="overlay-zoom" id="overlayZoom">
@@ -492,14 +528,14 @@
     const DAFTAR_BARANG = [
         {
             kode: "YBID0001",
-            foto: "20251018_114615.png",
+            foto: "/20251018_114615.png",
             nama: "Jasa buat logo",
             harga: "5K/1Logo",
             wa: "087872273979"
         },
          {
             kode: "YBID0002",
-            foto: "Screenshot_20260504-143524_Chrome.jpg",
+            foto: "/Screenshot_20260504-143524_Chrome.jpg",
             nama: "Jasa Pembuatan Website Metode-Pembayaran",
             harga: "10K",
             wa: "087872273979"
@@ -618,4 +654,4 @@ Mohon info lanjut, terima kasih.`;
 
 
 </body>
-  </html>
+    </html>
