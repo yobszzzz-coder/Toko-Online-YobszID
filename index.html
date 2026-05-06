@@ -498,11 +498,11 @@ img {
     -webkit-user-drag: none;
     user-drag: none;
 }
+    
     /* ============================================ */
 /* 🛡️ PENGAMAN GAMBAR - Yobsz Store           */
 /* ============================================ */
 
-/* Bungkus gambar agar aman */
 .img-safe-wrapper {
     position: relative;
     display: inline-block;
@@ -511,28 +511,25 @@ img {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    margin: 0 auto;
+    text-align: center;
 }
 
-/* Lapisan Watermark & Kisi-kisi */
 .img-safe-wrapper::after {
-    content: "YOBSZ STORE"; /* Ganti nama toko kamu */
+    content: "YOBsz STORE";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    
-    /* Efek garis tipis */
     background-image: 
         linear-gradient(rgba(0,0,0,0.07) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,0,0,0.07) 1px, transparent 1px);
     background-size: 25px 25px;
-
-    /* Teks watermark besar tapi tembus pandang */
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(0, 0, 0, 0.12); /* Ubah 0.12 jadi 0.3 kalau mau lebih gelap */
+    color: rgba(0, 0, 0, 0.12);
     font-size: 70px;
     font-weight: 900;
     z-index: 999;
@@ -542,25 +539,50 @@ img {
     white-space: nowrap;
 }
 
-/* Hanya gambar produk yang dikunci */
+/* GAMBAR PRODUK: Aman, tidak bisa disave, TETAP DI TENGAH */
 .img-safe-wrapper img {
     pointer-events: none !important;
     -webkit-user-drag: none;
     user-drag: none;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     display: block;
+    margin: 0 auto; /* ⬅️ Kunci biar di tengah */
 }
 
-/* TAPI gambar ikon (seperti search, menu, dll) tetap bisa dipakai */
+/* ============================================ */
+/* 🔍 PERBAIKAN KHUSUS IKON SEARCH & IKON LAIN */
+/* ============================================ */
+
+/* Pastikan semua gambar YANG BUKAN produk tetap normal & terlihat */
 img:not(.img-safe-wrapper img) {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+}
+
+/* Khusus untuk ikon search biar PASTI muncul */
+#search-icon,
+.search-icon img,
+img[src*="search"],
+img[src*="cari"] {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
     pointer-events: auto !important;
 }
 
-
 /* Matikan zoom di layar sentuh */
 body {
-    touch-action: pan-x pan-y; /* Cuma bisa geser kiri-kanan/atas-bawah, tidak bisa zoom */
+    touch-action: pan-x pan-y;
 }
-    
+
 
     </style>
 </head>
@@ -724,7 +746,10 @@ Mohon info lanjut, terima kasih.`;
             const waLink = `https://wa.me/62${barang.wa.substring(1)}?text=${pesanEncode}`;
 
             elemen.innerHTML = `
-                <img src="${barang.foto}" class="gambar-produk" alt="${barang.nama}">
+                <div class="img-safe-wrapper">
+    <img src="${barang.foto}" class="gambar-produk" alt="${barang.nama}">
+</div>
+
                 <div class="info-produk">
                     <span class="kode-produk">${barang.kode}</span>
                     <h3 class="nama-produk">${barang.nama}</h3>
@@ -767,43 +792,40 @@ Mohon info lanjut, terima kasih.`;
     window.onload = () => tampilkanBarang(DAFTAR_BARANG);
 
     // ============================================
-// 🛡️ SISTEM PENGAMAN GAMBAR OTOMATIS
+// 🛡️ SISTEM PENGAMAN GAMBAR OTOMATIS (JS)
 // ============================================
 
-// Jalankan setelah halaman siap
+// Jalankan fungsi ini setelah halaman siap
 document.addEventListener("DOMContentLoaded", function() {
-    protectAllImages();
+    // Jalankan pertama kali
+    pasangPelindungGambar();
+    
+    // ⚠️ PENTING:
+    // Kalau di website kamu ada fungsi yang menampilkan barang (misal: tampilBarang(), loadData(), dll),
+    // PASTIKAN di AKHIR fungsi tersebut kamu tambah baris ini:
+    // pasangPelindungGambar();
 });
 
-// Fungsi untuk melindungi semua gambar
-function protectAllImages() {
-    // Cari semua tag img di halaman
-    const allImages = document.querySelectorAll('img');
+// Fungsi untuk membungkus semua gambar
+function pasangPelindungGambar() {
+    // Cari semua gambar di halaman
+    const semuaGambar = document.querySelectorAll('img');
     
-    allImages.forEach(function(img) {
-        // Jangan bungkus kalau gambar sudah dibungkus
-        if(img.parentElement.classList.contains('img-safe-wrapper')) return;
-
-        // Buat pembungkus div
-        const wrapper = document.createElement('div');
-        wrapper.className = 'img-safe-wrapper';
-
+    semuaGambar.forEach(function(gambar) {
+        // Jangan bungkus kalau gambar sudah dibungkus atau gambar ikon kecil
+        if(gambar.parentElement.classList.contains('img-safe-wrapper')) return;
+        if(gambar.width < 50 || gambar.height < 50) return; // Lewati gambar kecil seperti ikon
+        
+        // Buat kotak pembungkus
+        const pembungkus = document.createElement('div');
+        pembungkus.className = 'img-safe-wrapper';
+        
         // Pindahkan gambar ke dalam pembungkus
-        img.parentNode.insertBefore(wrapper, img);
-        wrapper.appendChild(img);
+        gambar.parentNode.insertBefore(pembungkus, gambar);
+        pembungkus.appendChild(gambar);
     });
 }
 
-// ⚠️ PENTING:
-// Jika di JS kamu ada fungsi yang menampilkan barang (misal namanya tampilBarang()),
-// pastikan di AKHIR fungsi tersebut kamu tambahkan baris ini:
-// protectAllImages();
-
-// Contoh:
-// function tampilBarang() {
-//   ... kode kamu menampilkan gambar ...
-//   protectAllImages(); // <--- Tambahin ini biar gambar baru ikut aman
-// }
 
     
 </script>
