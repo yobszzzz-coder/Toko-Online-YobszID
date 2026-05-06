@@ -405,45 +405,6 @@
     background: linear-gradient(135deg, var(--ungu-cerah), var(--ungu-muda));
 }
 
-/* ===== FITUR LAYANAN PELANGGAN ===== */
-/* Tombol Pesan Mengambang */
-.tombol-pesan {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 999;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    border: none;
-    background: linear-gradient(135deg, var(--ungu-muda), var(--ungu-sedang));
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.tombol-pesan:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 20px var(--ungu-cerah);
-}
-
-/* Tanda Notifikasi di Tombol Pesan (Hanya terlihat untuk Admin) */
-.tanda-notif {
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 13px;
-    height: 13px;
-    background-color: var(--merah);
-    border-radius: 50%;
-    border: 2px solid white;
-    display: none;
-}
 
 /* ===== TAMBAHAN STYLE SALURAN WA ===== */
 .link-saluran-wa {
@@ -581,16 +542,19 @@ img {
     white-space: nowrap;
 }
 
-/* Matikan fungsi klik, drag, dan save pada gambar */
+/* Hanya gambar produk yang dikunci */
 .img-safe-wrapper img {
-    pointer-events: none !important; /* ⬅️ Kunci: Tidak bisa tekan lama */
+    pointer-events: none !important;
     -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
     user-drag: none;
     display: block;
 }
+
+/* TAPI gambar ikon (seperti search, menu, dll) tetap bisa dipakai */
+img:not(.img-safe-wrapper img) {
+    pointer-events: auto !important;
+}
+
 
 /* Matikan zoom di layar sentuh */
 body {
