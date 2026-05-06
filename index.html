@@ -473,6 +473,24 @@
     height: 16px;
 }
 
+/* === PENGAMANAN GAMBAR === */
+img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    pointer-events: auto !important;
+}
+
+/* Mencegah munculnya opsi "Buka gambar di tab baru" / "Download" */
+img.no-drag {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
 
 
     </style>
@@ -541,6 +559,35 @@
             wa: "087872273979"
         },
     ];
+
+    // === PENGAMANAN WEBSITE ===
+
+// 1. Matikan Klik Kanan
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+// 2. Matikan Tombol Salin (Ctrl+C / Ctrl+U)
+document.addEventListener('keydown', function(e) {
+    if (e.key == 'F12' || 
+       (e.ctrlKey && e.shiftKey && e.key == 'I') || 
+       (e.ctrlKey && e.shiftKey && e.key == 'J') ||
+       (e.ctrlKey && e.key == 'U') ||
+       (e.ctrlKey && e.key == 'C')) 
+    {
+        e.preventDefault();
+        alert("🔒 Fitur ini dinonaktifkan untuk keamanan.");
+        return false;
+    }
+});
+
+// 3. Blokir Download saat Tekan Lama di HP
+document.querySelectorAll('img').forEach(img => {
+    img.classList.add('no-drag');
+    
+    // Mencegah aksi simpan gambar
+    img.oncontextmenu = function() { return false; }
+    img.onmousedown = function() { return false; }
+    img.onmouseup = function() { return false; }
+});
 
 
     // ===== FUNGSI ZOOM GAMBAR =====
