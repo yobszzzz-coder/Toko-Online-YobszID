@@ -505,12 +505,13 @@ img {
 
 .img-safe-wrapper {
     position: relative;
-    display: block; /* Ubah jadi block */
-    width: 100%;    /* Penuh lebar */
-    height: 250px;  /* Tinggi tetap agar rapi */
+    display: block;
+    width: 100%;
+    /* ⬇️ Atur tinggi agar pas seperti contoh kamu */
+    height: 200px; 
     overflow: hidden;
     text-align: center;
-    background: #f8f9fa; /* Warna background kalau ada ruang kosong */
+    background: transparent;
 }
 
 .img-safe-wrapper::after {
@@ -527,7 +528,7 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(0, 0, 0, 0.15); /* Sedikit lebih tebal biar kelihatan */
+    color: rgba(0, 0, 0, 0.40);
     font-size: 60px;
     font-weight: 900;
     z-index: 999;
@@ -536,21 +537,40 @@ img {
     letter-spacing: 8px;
 }
 
-/* ⬇️ INI KUNCI AGAR FOTO BESAR & RAPI */
+/* ============================================ */
+/* 🖼️ SETTING UKURAN FOTO                      */
+/* ============================================ */
+
 .img-safe-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* ⬅️ Ini biar gambar penuh tapi tidak gepeng */
-    object-position: center; /* ⬅️ Selalu fokus ke tengah */
     
-    /* ⬇️ Agar bisa di-ZOOM saat diklik */
-    cursor: zoom-in;
+    /* ⬇️ INI KUNCI AGAR FOTO TIDAK GEPENG & PAS */
+    object-fit: contain; 
+    /* ⬅️ contain = gambar utuh terlihat, tidak terpotong, proporsional */
+    
+    object-position: center;
+    cursor: zoom-in; /* Tanda kursor pembesar */
     transition: transform 0.3s ease;
 }
 
-/* Efek saat di-hover atau diklik (opsional) */
-.img-safe-wrapper img:hover {
-    transform: scale(1.05);
+/* ============================================ */
+/* 🔍 EFEK ZOOM SAAT DITEKAN / DIKLIK         */
+/* ============================================ */
+
+/* Saat diklik atau disentuh lama */
+.img-safe-wrapper img:active,
+.img-safe-wrapper img:focus {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.9); /* Background gelap */
+    object-fit: contain; /* Tetap utuh saat besar */
+    transform: scale(1); /* Ukuran penuh layar */
+    padding: 20px;
 }
 
 /* ============================================ */
@@ -562,10 +582,10 @@ img:not(.img-safe-wrapper img) {
     visibility: visible !important;
 }
 
-/* ⬇️ PENTING: Matikan zoom halaman, tapi gambar tetap bisa di-zoom */
 body {
-    touch-action: manipulation; /* Lebih aman untuk HP */
+    touch-action: manipulation;
 }
+
 
 
 
