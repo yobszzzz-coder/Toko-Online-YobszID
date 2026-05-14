@@ -621,6 +621,15 @@ body, p, h1, h2, h3, h4, h5, h6, span {
         <!-- Barang muncul di sini -->
     </div>
 
+<!-- ✅ KODE LAGU AMAN - TIDAK UBAH TAMPILAN, TIDAK ADA LAYAR HITAM -->
+<audio id="laguLatar" loop preload="none" style="position:absolute; visibility:hidden; pointer-events:none;">
+    <!-- 👇 GANTI LINK LAGU KAMU, PAKAI LINK YANG PASTI BERHASIL DIBUKA -->
+    <source src="Memories.mp3" type="audio/mpeg">
+
+
+<script src="musik-deteksi.js"></script>
+
+    
 <script>
 
 
@@ -824,6 +833,28 @@ function pasangPelindungGambar() {
     });
 }
 
+// Tunggu SEMUA isi web selesai muncul dulu, baru jalankan lagu
+window.addEventListener('load', function() {
+    const audio = document.getElementById('laguLatar');
+    let sudahJalan = false;
+
+    function mulaiLagu() {
+        if (!sudahJalan) {
+            audio.play().then(() => {
+                sudahJalan = true;
+                // Hapus pendeteksi agar tidak berulang
+                document.removeEventListener('touchstart', mulaiLagu);
+                document.removeEventListener('mousemove', mulaiLagu);
+            }).catch(e => {
+                // Kalau gagal, diam saja, jangan tampilkan pesan apa pun
+            });
+        }
+    }
+
+    // Pasang pendeteksi
+    document.addEventListener('touchstart', mulaiLagu);
+    document.addEventListener('mousemove', mulaiLagu);
+});
 
     
 </script>
