@@ -621,13 +621,14 @@ body, p, h1, h2, h3, h4, h5, h6, span {
         <!-- Barang muncul di sini -->
     </div>
 
-<!-- ✅ KODE LAGU AMAN - TIDAK UBAH TAMPILAN, TIDAK ADA LAYAR HITAM -->
+<!-- ✅ KODE LAGU: BERHENTI OTOMATIS KELUAR WEB + NYALA KEMBALI MASUK LAGI -->
 <audio id="laguLatar" loop preload="none" style="position:absolute; visibility:hidden; pointer-events:none;">
-    <!-- 👇 GANTI LINK LAGU KAMU, PAKAI LINK YANG PASTI BERHASIL DIBUKA -->
+    <!-- 👇 GANTI LINK LAGU KAMU DI SINI -->
     <source src="Memories.mp3" type="audio/mpeg">
 
 
-<script src="musik-deteksi.js"></script>
+<script src="musik-kendali.js"></script>
+
 
     
 <script>
@@ -836,24 +837,58 @@ function pasangPelindungGambar() {
 // Tunggu SEMUA isi web selesai muncul dulu, baru jalankan lagu
 window.addEventListener('load', function() {
     const audio = document.getElementById('laguLatar');
-    let sudahJalan = false;
+    let sudahJalan = false; // Penanda: apakah lagu pernah dinyalakan?
 
+    // ==========================================
+    // 1. FUNGSI: NYALAKAN LAGU SAAT SENTUHAN/GERAKAN
+    // ==========================================
     function mulaiLagu() {
         if (!sudahJalan) {
             audio.play().then(() => {
-                sudahJalan = true;
-                // Hapus pendeteksi agar tidak berulang
+                sudahJalan = true; // Tandai lagu siap nyala/mati otomatis
+                // Hapus pendeteksi sentuhan setelah berhasil jalan pertama kali
                 document.removeEventListener('touchstart', mulaiLagu);
                 document.removeEventListener('mousemove', mulaiLagu);
             }).catch(e => {
-                // Kalau gagal, diam saja, jangan tampilkan pesan apa pun
+                // Diam saja kalau gagal, jangan tampilkan pesan error
             });
         }
     }
 
-    // Pasang pendeteksi
-    document.addEventListener('touchstart', mulaiLagu);
-    document.addEventListener('mousemove', mulaiLagu);
+    // Pasang pendeteksi sentuhan/gerakan untuk memulai lagu pertama kali
+    document.addEventListener('touchstart', mulaiLagu); // HP: geser/ketuk layar
+    document.addEventListener('mousemove', mulaiLagu); // PC: gerakkan kursor
+
+    // ==========================================
+    // 2. FUNGSI UTAMA: BERHENTI SAAT KELUAR WEB
+    // ==========================================
+    document.addEventListener('visibilitychange', function() {
+        // Cek: Apakah pengguna KELUAR dari web ini?
+        // (Pindah tab, buka WA, buka aplikasi lain, kunci layar, dll)
+        if (document.hidden) {
+            // ✅ KELUAR: Hentikan lagu
+            if (audio && !audio.paused) {
+                audio.pause();
+            }
+        } 
+        // Cek: Apakah pengguna KEMBALI lagi ke web ini?
+        else {
+            // ✅ KEMBALI: Nyalaan lagi lagu (hanya kalau sudah pernah dinyalakan sebelumnya)
+            if (audio && sudahJalan) {
+                audio.play();
+            }
+        }
+    });
+
+    // ==========================================
+    // 3. JAMINAN BERULANG TERUS (KALAU DI DALAM WEB)
+    // ==========================================
+    audio.addEventListener('ended', function() {
+        this.currentTime = 0; // Kembali ke awal lagu
+        if (!document.hidden && sudahJalan) {
+            this.play(); // Putar ulang hanya kalau masih di dalam web
+        }
+    });
 });
 
     
