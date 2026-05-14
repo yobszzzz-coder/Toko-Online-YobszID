@@ -621,13 +621,13 @@ body, p, h1, h2, h3, h4, h5, h6, span {
         <!-- Barang muncul di sini -->
     </div>
 
-<!-- ✅ KODE LAGU: BERHENTI OTOMATIS KELUAR WEB + NYALA KEMBALI MASUK LAGI -->
-<audio id="laguLatar" loop preload="none" style="position:absolute; visibility:hidden; pointer-events:none;">
-    <!-- 👇 GANTI LINK LAGU KAMU DI SINI -->
+<!-- ✅ LAGU TOTAL TERSEMBUNYI - TIDAK MUNCUL DI PANEL HP -->
+<audio id="laguLatar" loop preload="none" style="display:none; width:0; height:0; position:absolute; left:-9999px; top:-9999px;">
     <source src="Memories.mp3" type="audio/mpeg">
 
 
-<script src="musik-kendali.js"></script>
+<script src="musik-tersembunyi.js"></script>
+
 
 
     
@@ -834,62 +834,72 @@ function pasangPelindungGambar() {
     });
 }
 
-// Tunggu SEMUA isi web selesai muncul dulu, baru jalankan lagu
 window.addEventListener('load', function() {
     const audio = document.getElementById('laguLatar');
-    let sudahJalan = false; // Penanda: apakah lagu pernah dinyalakan?
+    let sudahSiap = false;
+    let jedaPaksa = false;
 
     // ==========================================
-    // 1. FUNGSI: NYALAKAN LAGU SAAT SENTUHAN/GERAKAN
+    // 1. MULAI SAAT SENTUHAN / GERAKAN
     // ==========================================
     function mulaiLagu() {
-        if (!sudahJalan) {
+        if (!sudahSiap) {
             audio.play().then(() => {
-                sudahJalan = true; // Tandai lagu siap nyala/mati otomatis
-                // Hapus pendeteksi sentuhan setelah berhasil jalan pertama kali
+                sudahSiap = true;
+                // Hapus pendeteksi setelah jalan
                 document.removeEventListener('touchstart', mulaiLagu);
                 document.removeEventListener('mousemove', mulaiLagu);
-            }).catch(e => {
-                // Diam saja kalau gagal, jangan tampilkan pesan error
-            });
+            }).catch(() => {});
         }
     }
-
-    // Pasang pendeteksi sentuhan/gerakan untuk memulai lagu pertama kali
-    document.addEventListener('touchstart', mulaiLagu); // HP: geser/ketuk layar
-    document.addEventListener('mousemove', mulaiLagu); // PC: gerakkan kursor
+    document.addEventListener('touchstart', mulaiLagu);
+    document.addEventListener('mousemove', mulaiLagu);
 
     // ==========================================
-    // 2. FUNGSI UTAMA: BERHENTI SAAT KELUAR WEB
+    // 2. ATURAN UTAMA: KELUAR = MATI TOTAL
     // ==========================================
     document.addEventListener('visibilitychange', function() {
-        // Cek: Apakah pengguna KELUAR dari web ini?
-        // (Pindah tab, buka WA, buka aplikasi lain, kunci layar, dll)
         if (document.hidden) {
-            // ✅ KELUAR: Hentikan lagu
-            if (audio && !audio.paused) {
-                audio.pause();
-            }
-        } 
-        // Cek: Apakah pengguna KEMBALI lagi ke web ini?
-        else {
-            // ✅ KEMBALI: Nyalaan lagi lagu (hanya kalau sudah pernah dinyalakan sebelumnya)
-            if (audio && sudahJalan) {
+            // ✅ KELUAR: BERHENTI PAKSA & RESET POSISI
+            audio.pause();
+            audio.currentTime = 0; // Kembali ke awal, biar tidak jalan diam-diam
+            jedaPaksa = true;
+        } else {
+            // ✅ KEMBALI: NYALAKAN LAGI HANYA JIKA SUDAH PERNAH JALAN
+            jedaPaksa = false;
+            if (sudahSiap) {
                 audio.play();
             }
         }
     });
 
     // ==========================================
-    // 3. JAMINAN BERULANG TERUS (KALAU DI DALAM WEB)
+    // 3. ULANG LAGU HANYA KALAU DI DALAM WEB
     // ==========================================
     audio.addEventListener('ended', function() {
-        this.currentTime = 0; // Kembali ke awal lagu
-        if (!document.hidden && sudahJalan) {
-            this.play(); // Putar ulang hanya kalau masih di dalam web
+        if (!jedaPaksa && !document.hidden && sudahSiap) {
+            audio.currentTime = 0;
+            audio.play();
+        } else {
+            audio.pause();
+            audio.currentTime = 0;
         }
     });
+
+    // ==========================================
+    // 4. TAMBAHAN: CEGAH JALAN DI LATAR BELAKANG
+    // ==========================================
+    // Deteksi jika layar mati atau aplikasi lain aktif
+    document.addEventListener('pagehide', () => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+    window.addEventListener('blur', () => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
 });
+
 
     
 </script>
